@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-alert */
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
@@ -20,10 +21,9 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 let score = 0;
 
-// eslint-disable-next-line no-use-before-define
 document.addEventListener('keydown', keyDownHandler);
-// eslint-disable-next-line no-use-before-define
 document.addEventListener('keyup', keyUpHandler);
+document.addEventListener('mousemove', mouseMoveHandler);
 
 const bricks = [];
 for (let c = 0; c < brickColumnCount; c += 1) {
@@ -46,6 +46,13 @@ function keyUpHandler(e) {
     rightPressed = false;
   } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
     leftPressed = false;
+  }
+}
+
+function mouseMoveHandler(e) {
+  const relativeX = e.clientX - canvas.offsetLeft;
+  if (relativeX > 0 && relativeX < canvas.width) {
+    paddleX = relativeX - paddleWidth / 2;
   }
 }
 

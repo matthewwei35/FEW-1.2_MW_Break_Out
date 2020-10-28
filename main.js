@@ -30,8 +30,8 @@ const LEFT = 'LEFT'
 // --------------------------------------------------------
 // VARIABLES
 // --------------------------------------------------------
-let x = canvas.width / 2;
-let y = canvas.height - 30;
+let ballX = canvas.width / 2;
+let ballY = canvas.height - 30;
 let dx = 2;
 let dy = -2;
 
@@ -88,7 +88,7 @@ function drawBricks() {
 
 function drawBall() {
   ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = whiteColor;
   ctx.fill();
   ctx.closePath();
@@ -115,16 +115,16 @@ function drawLives() {
 }
 
 function moveBall() {
-  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+  if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
     dx = -dx;
   }
 }
 
 function collisionPaddle() {
-  if (y + dy < ballRadius) {
+  if (ballY + dy < ballRadius) {
     dy = -dy;
-  } else if (y + dy > canvas.height - ballRadius) {
-    if (x + paddleX && x < paddleX + paddleWidth) {
+  } else if (ballY + dy > canvas.height - ballRadius) {
+    if (ballX + paddleX && ballX < paddleX + paddleWidth) {
       dy = -dy;
     } else {
       lives -= 1;
@@ -132,8 +132,8 @@ function collisionPaddle() {
         alert('GAME OVER');
         document.location.reload();
       } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
+        ballX = canvas.width / 2;
+        ballY = canvas.height - 30;
         dx = 2;
         dy = -2;
         paddleX = (canvas.width - paddleWidth) / 2;
@@ -161,7 +161,7 @@ function collisionDetection() {
     for (let r = 0; r < brickRowCount; r += 1) {
       const b = bricks[c][r];
       if (b.status === 1) {
-        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+        if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
           dy = -dy;
           b.status = 0;
           score += 1;
@@ -187,8 +187,8 @@ function draw() {
   checkKeys();
   collisionDetection();
 
-  x += dx;
-  y += dy;
+  ballX += dx;
+  ballY += dy;
   requestAnimationFrame(draw);
 }
 

@@ -68,6 +68,10 @@ function mouseMoveHandler(e) {
   }
 }
 
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
@@ -176,7 +180,7 @@ function collisionDetection() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  clearCanvas();
   drawBricks();
   drawBall();
   drawPaddle();
@@ -195,10 +199,6 @@ function draw() {
 // --------------------------------------------------------
 // INITIALIZATION
 // --------------------------------------------------------
-document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-document.addEventListener('mousemove', mouseMoveHandler);
-
 const bricks = [];
 for (let c = 0; c < brickColumnCount; c += 1) {
   bricks[c] = [];
@@ -206,5 +206,9 @@ for (let c = 0; c < brickColumnCount; c += 1) {
     bricks[c][r] = { x: 0, y: 0, status: 1 };
   }
 }
+
+document.addEventListener('keydown', keyDownHandler);
+document.addEventListener('keyup', keyUpHandler);
+document.addEventListener('mousemove', mouseMoveHandler);
 
 draw();

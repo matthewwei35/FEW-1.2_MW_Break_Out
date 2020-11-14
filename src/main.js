@@ -50,6 +50,28 @@ let lives = 3;
 // --------------------------------------------------------
 // CLASSES
 // --------------------------------------------------------
+class Ball {
+  constructor(x, y, dx = 2, dy = -2, radius = 10, color = '#FFFFFF') {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.radius = radius;
+    this.color = color;
+    this.PI2 = Math.PI * 2;
+  }
+
+  render(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, this.PI2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+const ball = new Ball(canvas.width / 2, canvas.height - 30);
+
 class Brick {
   constructor(x, y, width, height, color) {
     this.x = x;
@@ -107,28 +129,6 @@ class Bricks {
 }
 
 const bricks = new Bricks(brickColumnCount, brickRowCount);
-
-class Ball {
-  constructor(x, y, dx = 2, dy = -2, radius = 10, color = '#FFFFFF') {
-    this.x = x;
-    this.y = y;
-    this.dx = dx;
-    this.dy = dy;
-    this.radius = radius;
-    this.color = color;
-    this.PI2 = Math.PI * 2;
-  }
-
-  render(ctx) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, this.PI2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
-}
-
-const ball = new Ball(canvas.width / 2, canvas.height - 30);
 
 // --------------------------------------------------------
 // FUNCTIONS

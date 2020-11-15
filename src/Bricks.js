@@ -1,3 +1,9 @@
+// --------------------------------------------------------
+// BRICKS
+// --------------------------------------------------------
+
+import Brick from './Brick';
+
 class Bricks {
   constructor(cols, rows, width = 50, height = 20, padding = 10, offsetTop = 30, offsetLeft = 30, color = '#FCAF3B') {
     this.cols = cols;
@@ -34,3 +40,5 @@ class Bricks {
     }
   }
 }
+
+export default Bricks;

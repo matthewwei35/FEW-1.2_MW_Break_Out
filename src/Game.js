@@ -2,6 +2,12 @@
 // --------------------------------------------------------
 // GAME
 // --------------------------------------------------------
+
+import Sprite from './Sprite';
+import Ball from './Ball';
+import Bricks from './Bricks';
+import GameLabel from './GameLabel';
+
 class Game {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
@@ -22,8 +28,8 @@ class Game {
 
     this.ball = new Ball(this.canvas.width / 2, this.canvas.height - 30);
     this.bricks = new Bricks(this.brickColumnCount, this.brickRowCount);
-    this.paddle = new Paddle(this.paddleXStart, this.paddleYStart, this.paddleWidth,
-      this.paddleHeight);
+    this.paddle = new Sprite(this.paddleXStart, this.paddleYStart, this.paddleWidth,
+      this.paddleHeight, '#FCAF3B');
     this.scoreLabel = new GameLabel('Score: ', 8, 20);
     this.livesLabel = new GameLabel('Lives: ', this.canvas.width - 65, 20);
 
@@ -143,3 +149,5 @@ class Game {
     });
   }
 }
+
+export default Game;

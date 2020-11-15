@@ -1,9 +1,13 @@
-class GameLabel {
+// --------------------------------------------------------
+// GAME LABEL
+// --------------------------------------------------------
+
+import Sprite from './Sprite';
+
+class GameLabel extends Sprite {
   constructor(text, x, y, color = '#FCAF3B', font = '16px Helvetica') {
+    super(x, y, 0, 0, color);
     this.text = text;
-    this.x = x;
-    this.y = y;
-    this.color = color;
     this.font = font;
     this.value = 0;
   }
@@ -14,3 +18,5 @@ class GameLabel {
     ctx.fillText(`${this.text} ${this.value}`, this.x, this.y);
   }
 }
+
+export default GameLabel;

@@ -13,8 +13,6 @@ const ctx = canvas.getContext('2d');
 // --------------------------------------------------------
 // CONSTANTS
 // --------------------------------------------------------
-const ballRadius = 10;
-
 const paddleHeight = 10;
 const paddleWidth = 75;
 const paddleXStart = (canvas.width - paddleWidth) / 2;
@@ -30,12 +28,6 @@ const LEFT = 'LEFT';
 
 const gameOverMessage = 'GAME OVER';
 const winMessage = 'YOU WIN, CONGRATULATIONS!';
-
-// --------------------------------------------------------
-// VARIABLES
-// --------------------------------------------------------
-let rightPressed = false;
-let leftPressed = false;
 
 // --------------------------------------------------------
 // CLASSES
@@ -66,8 +58,6 @@ class Ball {
     ctx.closePath();
   }
 }
-
-const ball = new Ball(canvas.width / 2, canvas.height - 30);
 
 // Brick
 class Brick {
@@ -127,8 +117,6 @@ class Bricks {
   }
 }
 
-const bricks = new Bricks(brickColumnCount, brickRowCount);
-
 // Paddle
 class Paddle {
   constructor(x, y, width, height, color = '#FCAF3B') {
@@ -153,10 +141,7 @@ class Paddle {
   }
 }
 
-const paddle = new Paddle(paddleXStart, paddleYStart, paddleWidth, paddleHeight);
-
-// Score
-// Lives
+// Score and Lives
 class GameLabel {
   constructor(text, x, y, color = '#FCAF3B', font = '16px Helvetica') {
     this.text = text;
@@ -174,118 +159,130 @@ class GameLabel {
   }
 }
 
-const scoreLabel = new GameLabel('Score: ', 8, 20);
-const livesLabel = new GameLabel('Lives: ', canvas.width - 65, 20);
-livesLabel.value = 3;
+// Game
+class Game {
+  constructor() {
+    this.ball = new Ball(canvas.width / 2, canvas.height - 30);
+    this.bricks = new Bricks(brickColumnCount, brickRowCount);
+    this.paddle = new Paddle(paddleXStart, paddleYStart, paddleWidth, paddleHeight);
+    this.scoreLabel = new GameLabel('Score: ', 8, 20);
+    this.livesLabel = new GameLabel('Lives: ', canvas.width - 65, 20);
 
-// --------------------------------------------------------
-// FUNCTIONS
-// --------------------------------------------------------
-function keyDownHandler(e) {
-  if (e.key === RIGHT || e.key === ARROW_RIGHT) {
-    rightPressed = true;
-  } else if (e.key === LEFT || e.key === ARROW_LEFT) {
-    leftPressed = true;
+    this.rightPressed = false;
+    this.leftPressed = false;
+
+    this.setup();
+
+    this.draw();
   }
-}
 
-function keyUpHandler(e) {
-  if (e.key === RIGHT || e.key === ARROW_RIGHT) {
-    rightPressed = false;
-  } else if (e.key === LEFT || e.key === ARROW_LEFT) {
-    leftPressed = false;
-  }
-}
+  setup() {
+    this.livesLabel.value = 3;
+    document.addEventListener('keydown', (e) => {
+      this.keyDownHandler(e);
+    });
+    document.addEventListener('keyup', (e) => {
+      this.keyUpHandler(e);
+    });
+    document.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
+  } // End Setup
 
-function mouseMoveHandler(e) {
-  const relativeX = e.clientX - canvas.offsetLeft;
-  if (relativeX > 0 && relativeX < canvas.width) {
-    paddle.moveTo(relativeX - paddleWidth / 2, paddleYStart);
-  }
-}
-
-function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function collisionPaddle() {
-  if (ball.y + ball.dy < ballRadius) {
-    ball.dy = -ball.dy;
-  } else if (ball.y + ball.dy > canvas.height - ballRadius) {
-    if (ball.x + paddle.x && ball.x < paddle.x + paddleWidth) {
-      ball.dy = -ball.dy;
-    } else {
-      livesLabel.value -= 1;
-      if (livesLabel.value < 1) {
-        alert(gameOverMessage);
-        document.location.reload();
-      } else {
-        ball.x = canvas.width / 2;
-        ball.y = canvas.height - 30;
-        ball.dx = 2;
-        ball.dy = -2;
-        paddle.x = paddleXStart;
-      }
-    }
-  }
-}
-
-function checkKeys() {
-  if (rightPressed) {
-    paddle.x += 7;
-    if (paddle.x + paddleWidth > canvas.width) {
-      paddle.x = canvas.width - paddleWidth;
-    }
-  } else if (leftPressed) {
-    paddle.x -= 7;
-    if (paddle.x < 0) {
-      paddle.x = 0;
-    }
-  }
-}
-
-function collisionDetection() {
-  for (let c = 0; c < bricks.cols; c += 1) {
-    for (let r = 0; r < bricks.rows; r += 1) {
-      const b = bricks.bricks[c][r];
-      if (b.status === 1) {
-        if (ball.x > b.x && ball.x < b.x + bricks.width && ball.y > b.y && ball.y < b.y
-            + bricks.height) {
-          ball.dy = -ball.dy;
-          b.status = 0;
-          scoreLabel.value += 1;
-          if (scoreLabel.value === bricks.cols * bricks.rows) {
-            alert(winMessage);
-            document.location.reload();
+  collisionDetection() {
+    for (let c = 0; c < this.bricks.cols; c += 1) {
+      for (let r = 0; r < this.bricks.rows; r += 1) {
+        const b = this.bricks.bricks[c][r];
+        if (b.status === 1) {
+          if (this.ball.x > b.x && this.ball.x < b.x + this.bricks.width && this.ball.y > b.y
+            && this.ball.y < b.y + this.bricks.height) {
+            this.ball.dy = -this.ball.dy;
+            b.status = 0;
+            this.scoreLabel.value += 1;
+            if (this.scoreLabel.value === this.bricks.cols * this.bricks.rows) {
+              alert(winMessage);
+              document.location.reload();
+            }
           }
         }
       }
     }
+  } // End Collision Detection
+
+  collisionPaddle() {
+    if (this.ball.y + this.ball.dy < this.ball.radius) {
+      this.ball.dy = -this.ball.dy;
+    } else if (this.ball.y + this.ball.dy > canvas.height - this.ball.radius) {
+      if (this.ball.x + this.paddle.x && this.ball.x < this.paddle.x + this.paddle.width) {
+        this.ball.dy = -this.ball.dy;
+      } else {
+        this.livesLabel.value -= 1;
+        if (this.livesLabel.value === 0) {
+          alert(gameOverMessage);
+          document.location.reload();
+        } else {
+          this.ball.x = canvas.width / 2;
+          this.ball.y = canvas.height - 30;
+          this.ball.dx = 2;
+          this.ball.dy = -2;
+          this.paddle.x = paddleXStart;
+        }
+      }
+    }
   }
-}
 
-function draw() {
-  clearCanvas();
-  bricks.render(ctx);
-  ball.render(ctx);
-  paddle.render(ctx);
-  scoreLabel.render(ctx);
-  livesLabel.render(ctx);
-  ball.move();
-  collisionPaddle();
-  checkKeys();
-  collisionDetection();
+  keyDownHandler(e) {
+    if (e.key === RIGHT || e.key === ARROW_RIGHT) {
+      this.rightPressed = true;
+    } else if (e.key === LEFT || e.key === ARROW_LEFT) {
+      this.leftPressed = true;
+    }
+  } // End Key Down Handler
 
-  ball.x += ball.dx;
-  ball.y += ball.dy;
-  requestAnimationFrame(draw);
-}
+  keyUpHandler(e) {
+    if (e.key === RIGHT || e.key === ARROW_RIGHT) {
+      this.rightPressed = false;
+    } else if (e.key === LEFT || e.key === ARROW_LEFT) {
+      this.leftPressed = false;
+    }
+  } // End Key Up Handler
 
-// --------------------------------------------------------
-// INITIALIZATION
-// --------------------------------------------------------
-document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-document.addEventListener('mousemove', mouseMoveHandler);
+  mouseMoveHandler(e) {
+    const relativeX = e.clientX - canvas.offsetLeft;
+    if (relativeX > 0 && relativeX < canvas.width) {
+      this.paddle.moveTo(relativeX - this.paddle.width / 2, this.paddle.y);
+    }
+  } // End Mouse Move Handler
 
-draw();
+  checkKeys() {
+    if (this.rightPressed) {
+      this.paddle.x += 7;
+      if (this.paddle.x + this.paddle.width > canvas.width) {
+        this.paddle.x = canvas.width - this.paddle.width;
+      }
+    } else if (this.leftPressed) {
+      this.paddle.x -= 7;
+      if (this.paddle.x < 0) {
+        this.paddle.x = 0;
+      }
+    }
+  } // End Check Keys
+
+  draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.bricks.render(ctx);
+    this.ball.render(ctx);
+    this.paddle.render(ctx);
+    this.scoreLabel.render(ctx);
+    this.livesLabel.render(ctx);
+    this.ball.move();
+    this.collisionPaddle();
+    this.checkKeys();
+    this.collisionDetection();
+    this.ball.x += this.ball.dx;
+    this.ball.y += this.ball.dy;
+    requestAnimationFrame(() => {
+      this.draw();
+    });
+  }
+} // End Game Class
+
+const game = new Game();

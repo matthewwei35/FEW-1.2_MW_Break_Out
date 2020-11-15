@@ -7,9 +7,23 @@ class Game {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext('2d');
 
+    this.paddleHeight = 10;
+    this.paddleWidth = 75;
+    this.paddleXStart = (this.canvas.width - this.paddleWidth) / 2;
+    this.paddleYStart = this.canvas.height - this.paddleHeight;
+    this.brickRowCount = 5;
+    this.brickColumnCount = 7;
+    this.ARROW_RIGHT = 'ArrowRight';
+    this.ARROW_LEFT = 'ArrowLeft';
+    this.RIGHT = 'RIGHT';
+    this.LEFT = 'LEFT';
+    this.gameOverMessage = 'GAME OVER';
+    this.winMessage = 'YOU WIN, CONGRATULATIONS!';
+
     this.ball = new Ball(this.canvas.width / 2, this.canvas.height - 30);
-    this.bricks = new Bricks(brickColumnCount, brickRowCount);
-    this.paddle = new Paddle(paddleXStart, paddleYStart, paddleWidth, paddleHeight);
+    this.bricks = new Bricks(this.brickColumnCount, this.brickRowCount);
+    this.paddle = new Paddle(this.paddleXStart, this.paddleYStart, this.paddleWidth,
+      this.paddleHeight);
     this.scoreLabel = new GameLabel('Score: ', 8, 20);
     this.livesLabel = new GameLabel('Lives: ', this.canvas.width - 65, 20);
 
@@ -43,7 +57,7 @@ class Game {
             b.status = 0;
             this.scoreLabel.value += 1;
             if (this.scoreLabel.value === this.bricks.cols * this.bricks.rows) {
-              alert(winMessage);
+              alert(this.winMessage);
               document.location.reload();
             }
           }
@@ -61,31 +75,31 @@ class Game {
       } else {
         this.livesLabel.value -= 1;
         if (this.livesLabel.value === 0) {
-          alert(gameOverMessage);
+          alert(this.gameOverMessage);
           document.location.reload();
         } else {
           this.ball.x = this.canvas.width / 2;
           this.ball.y = this.canvas.height - 30;
           this.ball.dx = 2;
           this.ball.dy = -2;
-          this.paddle.x = paddleXStart;
+          this.paddle.x = this.paddleXStart;
         }
       }
     }
   }
 
   keyDownHandler(e) {
-    if (e.key === RIGHT || e.key === ARROW_RIGHT) {
+    if (e.key === this.RIGHT || e.key === this.ARROW_RIGHT) {
       this.rightPressed = true;
-    } else if (e.key === LEFT || e.key === ARROW_LEFT) {
+    } else if (e.key === this.LEFT || e.key === this.ARROW_LEFT) {
       this.leftPressed = true;
     }
   } // End Key Down Handler
 
   keyUpHandler(e) {
-    if (e.key === RIGHT || e.key === ARROW_RIGHT) {
+    if (e.key === this.RIGHT || e.key === this.ARROW_RIGHT) {
       this.rightPressed = false;
-    } else if (e.key === LEFT || e.key === ARROW_LEFT) {
+    } else if (e.key === this.LEFT || e.key === this.ARROW_LEFT) {
       this.leftPressed = false;
     }
   } // End Key Up Handler
@@ -112,12 +126,12 @@ class Game {
   } // End Check Keys
 
   draw() {
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.bricks.render(ctx);
-    this.ball.render(ctx);
-    this.paddle.render(ctx);
-    this.scoreLabel.render(ctx);
-    this.livesLabel.render(ctx);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.bricks.render(this.ctx);
+    this.ball.render(this.ctx);
+    this.paddle.render(this.ctx);
+    this.scoreLabel.render(this.ctx);
+    this.livesLabel.render(this.ctx);
     this.ball.move();
     this.collisionPaddle();
     this.checkKeys();
@@ -128,4 +142,4 @@ class Game {
       this.draw();
     });
   }
-} // End Game Class
+}

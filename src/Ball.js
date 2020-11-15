@@ -6,11 +6,13 @@ class Ball {
     this.dy = dy;
     this.radius = radius;
     this.color = color;
+    // This was a quick-fix
+    this.canvasWidth = 480;
     this.PI2 = Math.PI * 2;
   }
 
   move() {
-    if (this.x + this.dx > canvas.width - this.radius || this.x + this.dx < this.radius) {
+    if (this.x + this.dx > this.canvasWidth - this.radius || this.x + this.dx < this.radius) {
       this.dx = -this.dx;
     }
   }
